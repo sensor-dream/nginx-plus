@@ -1,0 +1,10 @@
+!.editorconfig
+!.gitattributes
+!.gitignore
+.git
+tmp
+security_file
+!nginx/compile/cfg
+nginx/compile/*
+!openresty/compile/cfg
+openresty/compile

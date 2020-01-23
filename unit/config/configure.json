@@ -1,0 +1,280 @@
+{
+    "settings": {
+        "http": {
+            "header_read_timeout": 10,
+            "body_read_timeout": 10,
+            "send_timeout": 10,
+            "idle_timeout": 120,
+            "max_body_size": 6291456,
+            "static": {
+                "mime_types": {
+                    "text/html": [
+                        ".html"
+                    ],
+                    "text/plain": [
+                         "README",
+                         "LICENSE",
+                         "NOTICE"
+                    ],
+                    "text/markdown": [
+                        ".md"
+                    ],
+                    "text/css": [
+                         ".css"
+                    ],
+                    "application/javascript": [
+                         ".js"
+                    ],
+                    "application/json": [
+                         ".json"
+                    ]
+                }
+            }
+        }
+    },
+    "listeners": {
+        "127.0.0.1:8300": {
+            "pass": "applications/root"
+        },
+        "127.0.0.1:8301": {
+            "pass": "applications/dev"
+        },
+        "127.0.0.1:8302": {
+            "pass": "applications/probe"
+        },
+        "127.0.0.1:8303": {
+            "pass": "applications/laravel"
+        },
+        "127.0.0.1:8304": {
+            "pass": "applications/postwoman"
+        },
+        "127.0.0.1:8305": {
+            "pass": "applications/not"
+        },
+        "127.0.0.1:8306": {
+            "pass": "applications/bookstack"
+        },
+        "127.0.0.1:8400": {
+            "pass": "applications/pma"
+        }
+    },
+    "applications": {
+        "root": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/root/www/laravel_ecosystem_mppc/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "dev": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/dev/www/laravel_ecosystem_dmppc/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "probe": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/dev/www/laravel_ecosystem_dmppc_probe/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "laravel": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/dev/www/laravel_ecosystem_clean/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "postwoman": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/postwoman/www/dist",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "not": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/root/www/laravel_ecosystem_mppc_probe/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "bookstack": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/bookstack/www/public",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        },
+        "pma": {
+            "type": "php",
+            "root": "/mnt/sda/Development/www_share/ru/sensor-dream/pma/www",
+            "user": "apache",
+            "group": "apache",
+            "processes": {
+                "max": 10,
+                "spare": 1,
+                "idle_timeout": 20
+            },
+            "index": "index.php",
+            "limits": {
+                "timeout": 10,
+                "requests": 1000
+            },
+            "options": {
+                "file": "/etc/php.ini",
+                "admin": {
+                    "memory_limit": "256M",
+                    "variables_order": "EGPCS",
+                    "expose_php": "0"
+                },
+                "user": {
+                    "display_errors": "0"
+                }
+            }
+        }
+    },
+    "access_log": "/var/log/nginx/unit/access.log"
+}

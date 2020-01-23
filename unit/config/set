@@ -1,0 +1,5 @@
+#!/bin/env bash
+
+[[ ! -d "/var/log/nginx/unit" ]] && sudo mkdir -p "/var/log/nginx/unit";
+
+sudo curl -X PUT --data-binary @configure.json --unix-socket /var/run/unit//control.sock http://localhost/config/

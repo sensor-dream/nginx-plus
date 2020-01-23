@@ -1,0 +1,118 @@
+#!/bin/env bash
+# -*- coding: utf-8 -*-
+#
+## @Author: Pavel M. Teslenko
+## @Email: sensor-dream@sensor-dream.ru
+## @Copyright © Pavel M. Teslenko. All rights reserved. Contacts: sensor-dream@sensor-dream.ru
+## @Copyright © sensor-dream. All rights reserved. Contacts: sensor-dream@sensor-dream.ru
+## @Copyright © Sensor-Dream Boxed System (SDBS). Contacts: sensor-dream@sensor-dream.ru
+## @License: http://www.apache.org/licenses/LICENSE-2.0
+## @Site: https://sensor-dream.ru
+## @File: set_link_config
+## @Creation date file: 23.01.2020, 17:42:32
+
+#
+#   Декларируем имя файла
+#
+
+declare -rx set_link_config_script_source="$BASH_SOURCE";
+
+if [[ -z "${flag_clear}" ]]; then
+  declare -rx flag_clear=1;
+  clear
+fi
+
+if [[ -z "${main_run_script_path}" ]]; then
+  declare -rx main_run_script_path="$(pwd)";
+  printf "Run scripts: %s\n" "${set_link_config_script_source}";
+fi
+
+#
+#   Подключаем общую библиотеку и общую конфигурацию
+#
+
+if [[ -z "${main_cfg_script_source}" ]]; then
+  check=1;
+  while [[ "${check}" -eq 1 ]]; do
+    if [[ ! -f 'main.cfg' ]]; then
+      if [[ "$(pwd)" != "/" ]]; then
+        cd ../;
+      else
+        cd ${main_run_script_path};
+        check=0;
+        echo '\e[47;31m'"!!! Not found configuration shared file !!!\033[0m";
+        tput sgr0;
+        exit 1;
+      fi
+    else
+      check=0;
+      declare -rx main_project_path="$(pwd)";
+      . "${main_project_path}/main.cfg";
+      cd "${main_run_script_path}";
+    fi
+  done
+fi
+
+
+function main_set_link_config_script_source(){
+
+  printf "%s\n\n" "Initialise main function of set_link_config script source";
+
+  local nginx_path="/etc/nginx";
+  local nginx_path_def_server_domain="${nginx_path}/default.d";
+  local nginx_path_conf_domain="${nginx_path}/conf.d";
+
+  local nginx_conf="${nginx_path}/nginx.conf";
+  local nginx_load_dynamic_modules_conf_path="/usr/share/nginx/modules";
+  local nginx_load_dynamic_modules_one_file_conf="${nginx_load_dynamic_modules_conf_path}/ngx-load-dynamic-modules.conf";
+
+  local main_nginx_path="${main_project_path}/nginx";
+  local main_nginx_path_conf="${main_nginx_path}/config";
+  local main_nginx_path_conf_domain="${main_nginx_path_conf}/conf.d";
+
+  local main_nginx_conf="${main_nginx_path_conf}/nginx.conf";
+  local main_nginx_load_dynamic_modules_one_file_conf="${main_nginx_path_conf}/ngx-load-dynamic-modules.conf";
+
+  [[ -L "${nginx_conf}" ]] && sudo rm -f "${nginx_conf}";
+  [[ -f "${nginx_conf}" ]] && sudo mv -f "${nginx_conf}" "${nginx_conf}.backup";
+  sudo ln -s "${main_nginx_conf}" "${nginx_conf}";
+  printf "Set symbolic link:\n\t%s -> %s\n" "${main_nginx_conf}" "${nginx_conf}";
+
+  [[ -L "${nginx_load_dynamic_modules_one_file_conf}" ]] && sudo rm -f "${nginx_load_dynamic_modules_one_file_conf}";
+  [[ -f "${nginx_load_dynamic_modules_one_file_conf}" ]] && sudo mv -f "${nginx_load_dynamic_modules_one_file_conf}" "${nginx_load_dynamic_modules_one_file_conf}.backup";
+
+  sudo rm -f /lib64/nginx/modules/*.old;
+
+  echo -e "#" > "${main_nginx_path_conf}/modules.list";
+  echo -e "# List compiled modules for nginx" >> "${main_nginx_path_conf}/modules.list";
+  echo -e "#\n" >> "${main_nginx_path_conf}/modules.list";
+  # ls -1R '/lib64/nginx/modules' >"${main_nginx_path_conf}/modules.list";
+  tree '/lib64/nginx/modules' >> "${main_nginx_path_conf}/modules.list";
+
+  echo -e "\n#" >> "${main_nginx_path_conf}/modules.list";
+  echo -e "# List of configs already used" >> "${main_nginx_path_conf}/modules.list";
+  echo -e "#\n" >> "${main_nginx_path_conf}/modules.list";
+  tree '/usr/share/nginx/modules' >> "${main_nginx_path_conf}/modules.list";
+
+  [[ ! -f "${main_nginx_load_dynamic_modules_one_file_conf}" ]] && echo -e "# Initialise load dynamic nginx modules\n# List compiled modules of /lib64/nginx/modules in file ${main_nginx_path_conf}/module.list\n\nload_module \"/lib64/nginx/modules/<your module>\";" > "${main_nginx_load_dynamic_modules_one_file_conf}";
+  sudo ln -s "${main_nginx_load_dynamic_modules_one_file_conf}" "${nginx_load_dynamic_modules_one_file_conf}";
+  printf "Set symbolic link:\n\t%s -> %s\n" "${main_nginx_load_dynamic_modules_one_file_conf}" "${nginx_load_dynamic_modules_one_file_conf}";
+
+  echo "${main_cfg_domain_list[@]}"
+  for i in "${!main_cfg_domain_list[@]}"; do
+    # echo "${main_nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}";
+    if [[ -L "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}" ]]; then
+	printf "Remove sumlink %s ->\n\t%s\n" "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}" "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}";
+	sudo rm -f "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}";
+    fi
+    if [[ -f "${main_nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}" ]]; then
+      sudo ln -s "${main_nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}" "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}";
+      printf "Set symbolic link: %s ->\n\t%s\n" "${main_nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}" "${nginx_path_conf_domain}/${main_cfg_domain_list[${i}]}";
+    fi
+  done
+
+  sudo systemctl restart nginx;
+
+}
+
+main_set_link_config_script_source "$@";
